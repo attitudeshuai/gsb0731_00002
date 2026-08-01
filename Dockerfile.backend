@@ -1,0 +1,32 @@
+# ============================================================
+# Stage 1: Build with Maven
+# ============================================================
+FROM maven:3.9-eclipse-temurin-17 AS builder
+
+WORKDIR /build
+
+COPY backend/pom.xml .
+RUN mvn dependency:go-offline -B
+
+COPY backend/src ./src
+RUN mvn clean package -DskipTests -B
+
+# ============================================================
+# Stage 2: Runtime with JRE
+# ============================================================
+FROM eclipse-temurin:17-jre-jammy
+
+WORKDIR /app
+
+RUN groupadd -r appuser && useradd -r -g appuser -d /app appuser
+
+COPY --from=builder /build/target/dbmanager-backend.jar /app/app.jar
+
+RUN chown -R appuser:appuser /app
+USER appuser
+
+EXPOSE 8080
+
+ENV JAVA_OPTS="-Xms256m -Xmx512m"
+
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /app/app.jar"]

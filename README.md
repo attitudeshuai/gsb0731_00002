@@ -158,3 +158,97 @@ tmp/
 temp/
 *.tmp
 ```
+
+---
+
+## 实现说明 / How to Run
+
+本仓库已按上述文档实现，目录结构如下：
+
+```
+.
+├── backend/                     # Spring Boot 3.x (Java 17, Maven)
+│   ├── pom.xml
+│   └── src/main/java/com/dbtool/backend/
+│       ├── entity/              # JPA 实体（元数据库）
+│       ├── repository/          # Spring Data JPA 仓库
+│       ├── security/            # AesCryptoService（AES-GCM，密钥来自环境变量）
+│       ├── target/              # TargetDataSourceManager（JDBC Template 动态连目标库）
+│       ├── service/             # 连接/SQL执行/元数据/表数据/导出 服务
+│       ├── controller/          # RESTful 控制器
+│       └── web/                 # 全局异常、CORS
+├── frontend/                    # Vue 3 + TS + Vite + Pinia
+│   └── src/
+│       ├── components/          # DataGrid（自研虚拟滚动）, SqlEditor（CodeMirror 6）...
+│       ├── views/WorkspaceView.vue
+│       ├── stores/ api/ types/ styles/
+├── docker-compose.yml
+├── Dockerfile.backend           # 多阶段：Maven 构建 + JRE 运行
+├── Dockerfile.frontend          # 多阶段：Node 构建 + Nginx 运行
+├── nginx/default.conf           # 前端托管 + /api 代理到 backend
+├── mysql/init.sql               # 自动建库建表（挂载到 docker-entrypoint-initdb.d）
+├── .dockerignore
+└── .env.example
+```
+
+### 架构约束落地
+
+- **元数据库用 JPA**：`entity/` + `repository/` 通过 Spring Data JPA (Hibernate) 管理 `users / connections / connection_groups / query_history / saved_queries / query_folders / export_logs`。
+- **目标库只用 JDBC Template**：所有对被管理数据库的访问都经由 `TargetDataSourceManager` 提供的 `JdbcTemplate`（`SqlExecutionService` / `MetadataService` / `TableDataService`），目标库不使用任何 ORM。
+- **密码 AES 加密**：`AesCryptoService` 使用 AES/GCM，密钥从环境变量 `APP_AES_KEY`（Base64，16/24/32 字节）注入，代码中不含硬编码密钥；密码密文存于 `connections.password_encrypted`，接口从不返回明文。
+- **RESTful API**：资源式路径 + 标准动词（GET/POST/PUT/DELETE），见下方接口清单。
+- **SQL 编辑器**：CodeMirror 6（`@codemirror/lang-sql`），未使用 Monaco。
+- **数据表格**：`DataGrid.vue` 为自研虚拟滚动实现（仅渲染可视区行 + overscan），未使用 ag-Grid / vxe-table。
+- **时间统一 UTC**：JPA/Jackson/ MySQL 时区均为 UTC。
+
+### 一键启动（Docker）
+
+```bash
+cp .env.example .env
+# 生成 AES 密钥并写入 .env 的 APP_AES_KEY，例如：
+#   openssl rand -base64 32
+docker-compose up -d --build
+```
+
+启动后访问 `http://localhost:8081`（可用 `FRONTEND_PORT` 调整）。
+仅前端端口对宿主机开放，`backend` 与 `mysql` 只在内部网络 `dbtool-net` 通信。
+
+### 本地开发
+
+后端：
+```bash
+cd backend
+# 需先有一个 MySQL 并建好 dbtool 库（可用 mysql/init.sql）
+$env:APP_AES_KEY = "<base64-32-byte-key>"
+mvn spring-boot:run
+```
+
+前端：
+```bash
+cd frontend
+npm install
+npm run dev      # http://localhost:5173 ，/api 代理到 localhost:8080
+```
+
+### REST API 概览
+
+| 方法 & 路径 | 说明 |
+|---|---|
+| `GET /api/connections` | 连接列表 |
+| `POST /api/connections` | 新建连接 |
+| `PUT /api/connections/{id}` | 编辑连接 |
+| `DELETE /api/connections/{id}` | 删除连接 |
+| `POST /api/connections/test` | 测试即席连接 |
+| `POST /api/connections/{id}/test` | 测试已保存连接 |
+| `GET /api/connection-groups` … | 分组增删改查 |
+| `GET /api/connections/{id}/databases` | 数据库列表 |
+| `GET /api/connections/{id}/databases/{db}/tables` | 表/视图列表 |
+| `GET .../tables/{t}/structure` `/columns` `/indexes` `/ddl` | 表结构/列/索引/建表语句 |
+| `POST /api/connections/{id}/execute` | 执行 SQL（记录历史） |
+| `POST /api/connections/{id}/table-data` | 表数据分页/排序/筛选 |
+| `POST /api/connections/{id}/table-data/save` | 行 INSERT/UPDATE/DELETE |
+| `POST /api/connections/{id}/export/{table\|query}` | 导出 CSV/JSON/SQL |
+| `GET /api/query-history` | 查询历史 |
+| `GET/POST/PUT/DELETE /api/saved-queries` `/folders` | 收藏查询与文件夹 |
+| `GET /api/export-logs` | 导出记录 |
+

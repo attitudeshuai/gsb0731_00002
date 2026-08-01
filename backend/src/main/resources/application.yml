@@ -1,0 +1,50 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: dbtool-backend
+  # Metadata database (Spring Data JPA / Hibernate)
+  datasource:
+    url: ${METADATA_DB_URL:jdbc:mysql://localhost:3306/dbtool?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&characterEncoding=utf8}
+    username: ${METADATA_DB_USER:root}
+    password: ${METADATA_DB_PASSWORD:root}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      pool-name: metadata-pool
+  jpa:
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: false
+        jdbc:
+          time_zone: UTC
+    show-sql: false
+  jackson:
+    time-zone: UTC
+    date-format: yyyy-MM-dd'T'HH:mm:ss'Z'
+
+# AES key for encrypting target-db connection passwords. MUST be injected via env.
+app:
+  security:
+    aes-key: ${APP_AES_KEY:}
+  target-db:
+    # per-target JDBC connection settings
+    connect-timeout-ms: 5000
+    query-timeout-seconds: 30
+    max-result-rows: 10000
+    # interactive query pool size (browsing / ad-hoc SQL / edits)
+    pool-size: 3
+    # separate pool for long-running exports so they don't starve interactive queries
+    export-pool-size: 2
+
+logging:
+  level:
+    root: INFO
+    com.dbtool.backend: DEBUG

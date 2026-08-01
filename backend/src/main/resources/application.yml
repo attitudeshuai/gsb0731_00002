@@ -1,0 +1,53 @@
+spring:
+  application:
+    name: db-manager-backend
+
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:db_manager}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&connectTimeout=10000&socketTimeout=60000
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:root}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 10000
+      idle-timeout: 300000
+      max-lifetime: 600000
+      pool-name: dbmanager-meta
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+      jdbc:
+        time_zone: UTC
+
+  jackson:
+    time-zone: UTC
+    serialization:
+      write-dates-as-timestamps: false
+
+server:
+  port: 8080
+
+app:
+  aes:
+    key: ${AES_SECRET_KEY:}
+  cors:
+    allowed-origins: ${CORS_ORIGINS:http://localhost:5173}
+  query:
+    default-timeout-seconds: ${QUERY_TIMEOUT_SECONDS:30}
+    default-max-rows: ${QUERY_MAX_ROWS:1000}
+  export:
+    timeout-seconds: ${EXPORT_TIMEOUT_SECONDS:600}
+  pool:
+    maximum-pool-size: ${TARGET_POOL_MAX_SIZE:5}
+    minimum-idle: ${TARGET_POOL_MIN_IDLE:1}
+    connection-timeout: ${TARGET_POOL_CONN_TIMEOUT:10000}
+    idle-timeout: ${TARGET_POOL_IDLE_TIMEOUT:300000}
+    max-lifetime: ${TARGET_POOL_MAX_LIFETIME:600000}
+    connect-timeout: ${TARGET_DB_CONNECT_TIMEOUT:10000}
+    socket-timeout: ${TARGET_DB_SOCKET_TIMEOUT:600000}

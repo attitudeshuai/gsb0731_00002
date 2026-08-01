@@ -1,0 +1,263 @@
+$primary-color: #1a73e8;
+$primary-hover: #1557b0;
+$primary-light: #e8f0fe;
+$sidebar-bg: #1e1e2e;
+$sidebar-hover: #2a2a3e;
+$sidebar-active: #1a73e8;
+$bg-color: #f5f6fa;
+$card-bg: #ffffff;
+$border-color: #e0e0e0;
+$text-primary: #333333;
+$text-secondary: #666666;
+$text-light: #999999;
+$success-color: #34a853;
+$warning-color: #fbbc04;
+$error-color: #ea4335;
+$sidebar-width: 220px;
+$sidebar-collapsed-width: 60px;
+$header-height: 56px;
+$radius-sm: 4px;
+$radius-md: 8px;
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+$shadow-md: 0 2px 8px rgba(0, 0, 0, 0.12);
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  font-size: 14px;
+  color: $text-primary;
+  background-color: $bg-color;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: $primary-color;
+  text-decoration: none;
+
+  &:hover {
+    color: $primary-hover;
+  }
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: inherit;
+  outline: none;
+}
+
+.app-layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.app-header {
+  height: $header-height;
+  background: $card-bg;
+  border-bottom: 1px solid $border-color;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  box-shadow: $shadow-sm;
+  z-index: 100;
+}
+
+.app-sidebar {
+  width: $sidebar-width;
+  background: $sidebar-bg;
+  color: #cdd6f4;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.25s ease;
+  overflow: hidden;
+
+  &.collapsed {
+    width: $sidebar-collapsed-width;
+  }
+}
+
+.app-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.app-content {
+  flex: 1;
+  padding: 20px;
+  overflow: auto;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: $radius-sm;
+  font-size: 14px;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+
+  &-primary {
+    background: $primary-color;
+    color: #fff;
+
+    &:hover {
+      background: $primary-hover;
+    }
+  }
+
+  &-default {
+    background: #fff;
+    color: $text-primary;
+    border-color: $border-color;
+
+    &:hover {
+      border-color: $primary-color;
+      color: $primary-color;
+    }
+  }
+
+  &-danger {
+    background: $error-color;
+    color: #fff;
+
+    &:hover {
+      background: darken($error-color, 8%);
+    }
+  }
+
+  &-sm {
+    padding: 4px 10px;
+    font-size: 12px;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid $border-color;
+  border-radius: $radius-sm;
+  font-size: 14px;
+  transition: border-color 0.2s;
+
+  &:focus {
+    border-color: $primary-color;
+  }
+
+  &::placeholder {
+    color: $text-light;
+  }
+}
+
+.card {
+  background: $card-bg;
+  border-radius: $radius-md;
+  box-shadow: $shadow-sm;
+  padding: 20px;
+}
+
+.page-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: $text-primary;
+  margin-bottom: 16px;
+}
+
+.nav-menu {
+  padding: 8px 0;
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 20px;
+    color: #cdd6f4;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+
+    &:hover {
+      background: $sidebar-hover;
+    }
+
+    &.active {
+      background: $sidebar-active;
+      color: #fff;
+    }
+
+    .nav-icon {
+      font-size: 18px;
+      width: 20px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .nav-label {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}
+
+.collapsed .nav-item {
+  padding: 10px 0;
+  justify-content: center;
+
+  .nav-label {
+    display: none;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+
+  &:hover {
+    background: #a8a8a8;
+  }
+}

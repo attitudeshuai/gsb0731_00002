@@ -1,0 +1,28 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: dbmanager-backend
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: "${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/dbmanager_meta?useUnicode=true&characterEncoding=utf8mb4&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true}"
+    username: "${SPRING_DATASOURCE_USERNAME:root}"
+    password: "${SPRING_DATASOURCE_PASSWORD:root123456}"
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  jackson:
+    time-zone: UTC
+
+app:
+  export:
+    # 导出任务查询超时（秒），0 表示不限制；导出是长任务，不套用连接级交互查询超时
+    timeout-seconds: ${EXPORT_TIMEOUT_SECONDS:0}
+    # 终态任务（完成/失败/取消）在内存与磁盘上的保留时间（分钟），到期自动清理
+    retention-minutes: ${EXPORT_RETENTION_MINUTES:30}
+
+logging:
+  level:
+    root: info

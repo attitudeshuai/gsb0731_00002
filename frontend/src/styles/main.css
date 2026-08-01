@@ -1,0 +1,344 @@
+/* ================= 深色主题变量（TablePlus 风格） ================= */
+:root {
+  --bg-0: #16181d; /* 最深：编辑器 / 代码块 */
+  --bg-1: #1c1f26; /* 主面板 */
+  --bg-2: #22262f; /* 工具栏 / 表头 / 侧栏 */
+  --bg-3: #2b303b; /* 悬浮 */
+  --bg-hover: rgba(255, 255, 255, 0.05);
+  --bg-selected: rgba(79, 140, 255, 0.16);
+
+  --border: #353a45;
+  --border-soft: #2a2e38;
+
+  --text-0: #e8eaf0;
+  --text-1: #a6acb9;
+  --text-2: #6f7683;
+
+  --accent: #4f8cff;
+  --accent-hover: #6ba1ff;
+  --green: #3fb950;
+  --red: #f5534b;
+  --yellow: #d29922;
+
+  --font-ui:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Cascadia Code', Consolas, 'Courier New', monospace;
+}
+
+/* ================= 基础 ================= */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--text-0);
+  background: var(--bg-1);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 滚动条 */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3a3f4b;
+  border-radius: 5px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #4a5060;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* ================= 按钮 ================= */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 6px 14px;
+  font-size: 12.5px;
+  font-family: var(--font-ui);
+  color: var(--text-0);
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background 0.12s,
+    border-color 0.12s;
+}
+
+.btn:hover:not(:disabled) {
+  background: #343a46;
+  border-color: #454b58;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-sm {
+  padding: 4px 10px;
+  font-size: 12px;
+}
+
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+.btn-danger {
+  background: transparent;
+  border-color: rgba(245, 83, 75, 0.5);
+  color: var(--red);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: rgba(245, 83, 75, 0.15);
+  border-color: var(--red);
+}
+
+/* ================= 输入控件 ================= */
+.input {
+  width: 100%;
+  padding: 6px 9px;
+  font-size: 12.5px;
+  font-family: var(--font-ui);
+  color: var(--text-0);
+  background: var(--bg-0);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  outline: none;
+  transition: border-color 0.12s;
+}
+
+.input:focus {
+  border-color: var(--accent);
+}
+
+.input::placeholder {
+  color: var(--text-2);
+}
+
+.input:disabled {
+  opacity: 0.5;
+}
+
+select.input {
+  cursor: pointer;
+}
+
+input[type='number'].input::-webkit-outer-spin-button,
+input[type='number'].input::-webkit-inner-spin-button {
+  opacity: 1;
+}
+
+/* ================= 表单 ================= */
+.form-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 12px;
+}
+
+.form-label {
+  color: var(--text-1);
+  font-size: 12px;
+}
+
+.req {
+  color: var(--red);
+  font-style: normal;
+}
+
+/* ================= 弹窗 ================= */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 12vh;
+  z-index: 2500;
+}
+
+.modal {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh;
+  animation: modal-in 0.14s ease;
+}
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-soft);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-0);
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--text-2);
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+}
+
+.modal-close:hover {
+  color: var(--text-0);
+}
+
+.modal-body {
+  padding: 14px 16px;
+  overflow: auto;
+}
+
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--border-soft);
+}
+
+/* ================= 抽屉 ================= */
+.drawer-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 2200;
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 460px;
+  max-width: 92vw;
+  background: var(--bg-1);
+  border-left: 1px solid var(--border);
+  box-shadow: -12px 0 36px rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+  animation: drawer-in 0.16s ease;
+}
+
+@keyframes drawer-in {
+  from {
+    transform: translateX(40px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+.drawer-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-2);
+  flex-shrink: 0;
+}
+
+.drawer-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-0);
+  flex: 1;
+}
+
+.drawer-body {
+  flex: 1;
+  overflow: auto;
+  min-height: 0;
+}
+
+.drawer-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--text-2);
+  font-size: 12.5px;
+  padding: 28px 16px;
+  text-align: center;
+}
+
+/* ================= Loading 旋转圈 ================= */
+.spinner {
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

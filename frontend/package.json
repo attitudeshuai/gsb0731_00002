@@ -1,0 +1,32 @@
+{
+  "name": "dbtool-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit -p tsconfig.json && vite build",
+    "build:nocheck": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@codemirror/autocomplete": "^6.16.0",
+    "@codemirror/commands": "^6.5.0",
+    "@codemirror/lang-sql": "^6.6.0",
+    "@codemirror/state": "^6.4.1",
+    "@codemirror/theme-one-dark": "^6.1.2",
+    "@codemirror/view": "^6.26.3",
+    "axios": "^1.6.8",
+    "codemirror": "^6.0.1",
+    "pinia": "^2.1.7",
+    "vue": "^3.4.21",
+    "vue-router": "^4.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.2",
+    "@vitejs/plugin-vue": "^5.0.4",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.8",
+    "vue-tsc": "^2.0.13"
+  }
+}

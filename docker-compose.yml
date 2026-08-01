@@ -1,0 +1,67 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: dbtool-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      MYSQL_DATABASE: dbtool
+      TZ: UTC
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-time-zone=+00:00
+    volumes:
+      - mysql-data:/var/lib/mysql
+      # auto build/init on first start
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - dbtool-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${MYSQL_ROOT_PASSWORD:-root}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    # No host port published: only reachable inside the internal network
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: dbtool-backend
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      METADATA_DB_URL: jdbc:mysql://mysql:3306/dbtool?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&characterEncoding=utf8
+      METADATA_DB_USER: root
+      METADATA_DB_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      # AES key injected from environment; NEVER hardcoded in the image.
+      APP_AES_KEY: ${APP_AES_KEY:?APP_AES_KEY must be set (Base64-encoded 16/24/32-byte key)}
+      TZ: UTC
+    networks:
+      - dbtool-net
+    # No host port published: reached only via the frontend Nginx proxy
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: dbtool-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      # Only the frontend is exposed to the host
+      - "${FRONTEND_PORT:-8081}:80"
+    networks:
+      - dbtool-net
+
+networks:
+  dbtool-net:
+    driver: bridge
+
+volumes:
+  mysql-data:
+    driver: local
